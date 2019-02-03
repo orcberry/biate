@@ -1,3 +1,11 @@
+
+.ask
+lambda/custom/prepositions.js
+
+# sample request
+examples/
+
+
 # Logs
 logs
 *.log

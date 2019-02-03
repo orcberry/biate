@@ -1,0 +1,14 @@
+{
+  "name": "biate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "lambda-local -l index.js -e ../../examples/LearnVMPIntent.json"
+  },
+  "author": "",
+  "dependencies": {
+    "ask-sdk-core": "^2.0.0",
+    "ask-sdk-model": "^1.0.0"
+  }
+}

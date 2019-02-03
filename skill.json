@@ -1,0 +1,30 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "de-DE": {
+          "summary": "Kurze Beschreibung",
+          "examplePhrases": [
+            "Alexa start biate",
+            "las uns lernen"
+          ],
+          "name": "biate",
+          "description": "Ganze Beschreibung"
+        }
+      },
+      "isAvailableWorldwide": true,
+      "testingInstructions": "Sample Testing Instructions.",
+      "category": "KNOWLEDGE_AND_TRIVIA",
+      "distributionCountries": []
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "sourceDir": "lambda/custom",
+          "uri": "ask-biate-skill"
+        }
+      }
+    },
+    "manifestVersion": "1.0"
+  }
+}
