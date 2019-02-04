@@ -1,5 +1,6 @@
 # Description
 
+<strong>WIP!</strong>
 German prepositions trainer.
 Based on skill-sample-nodejs-hello-world.
 
