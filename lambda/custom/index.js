@@ -19,13 +19,15 @@ function vmpToSsml(vmp) {
 
 const LearnVMPIntentHandler = {
   canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+    const { request } = handlerInput.requestEnvelope;
+    return request.type === 'IntentRequest'
       && (
-        handlerInput.requestEnvelope.request.intent.name === 'LearnVMPIntent'
-        || handlerInput.requestEnvelope.request.intent.name === 'NextVMPIntent'
+        request.intent.name === 'LearnVMPIntent'
+        || request.intent.name === 'NextVMPIntent'
       );
   },
   handle(handlerInput) {
+
 	  const index = Math.floor(Math.random() * VMP.length);
     const vmp = VMP[index];
     const speechText = vmpToSsml(vmp);
@@ -47,7 +49,8 @@ const LearnVMPIntentHandler = {
 
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
+    const { request } = handlerInput.requestEnvelope;
+    return request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
 		const speechText = 'Herzlich willkommen! Wolltest du ein paar neue Präpositionen lernen? ';
@@ -64,9 +67,10 @@ const LaunchRequestHandler = {
 
 const HelpIntentHandler = {
   canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent'
-      && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.FallbackIntent';
+    const { request } = handlerInput.requestEnvelope;
+    return request.type === 'IntentRequest'
+      && request.intent.name === 'AMAZON.HelpIntent'
+      && request.intent.name === 'AMAZON.FallbackIntent';
   },
   handle(handlerInput) {
 		const speechText = 'Einfach sag - Las uns lernen! ';
@@ -81,9 +85,10 @@ const HelpIntentHandler = {
 
 const CancelAndStopIntentHandler = {
   canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && (handlerInput.requestEnvelope.request.intent.name === 'AMAZON.CancelIntent'
-        || handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent');
+    const { request } = handlerInput.requestEnvelope;
+    return request.type === 'IntentRequest'
+      && (request.intent.name === 'AMAZON.CancelIntent'
+        || request.intent.name === 'AMAZON.StopIntent');
   },
   handle(handlerInput) {
     const speechText = 'Bis später! ';
@@ -99,7 +104,8 @@ const CancelAndStopIntentHandler = {
 
 const SessionEndedRequestHandler = {
   canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'SessionEndedRequest';
+    const { request } = handlerInput.requestEnvelope;
+    return request.type === 'SessionEndedRequest';
   },
   handle(handlerInput) {
     console.log(`<lang xml:lang="en-US">Session ended with reason: ${handlerInput.requestEnvelope.request.reason}</lang>`);
