@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test-launch": "lambda-local -l index.js -e ../../examples/LaunchRequest.json",
     "test": "lambda-local -l index.js -e ../../examples/LearnVMPIntent.json"
   },
   "author": "",

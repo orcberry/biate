@@ -9,6 +9,9 @@ Based on skill-sample-nodejs-hello-world.
 - ask-cli
 - lambda-local
 
+# Deployment
+ask deploy
+
 # States
 
 ```mermaid
