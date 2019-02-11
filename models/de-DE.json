@@ -4,9 +4,19 @@
       "invocationName": "beate",
       "intents": [
         {
-          "name": "LearnVMPIntent",
+          "name": "StartLearnIntent",
           "samples": [
-            "Las uns lernen"
+            "Lernen",
+            "Las uns lernen",
+            "Lernen wir heute"
+          ]
+        },
+        {
+          "name": "LearnIntent",
+          "samples": [
+            "Lernen",
+            "Las uns lernen",
+            "Lernen wir heute"
           ]
         },
         {
@@ -21,6 +31,10 @@
         },
         {
           "name": "AMAZON.FallbackIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.ResumeIntent",
           "samples": []
         },
         {

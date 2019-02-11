@@ -2,59 +2,76 @@
 /* eslint-disable  no-console */
 
 const Alexa = require('ask-sdk-core');
-const VMP = require('./prepositions');
+const PREPOSITIONS = require('./prepositions');
 
+const states = {
+  LEARN: `LEARN`,
+  TEST: `TEST`,
+};
+
+const generalCardTitle = 'Biate';
+
+const welcomeMessage = `Guten Morgen!`;
+const learnOrTestMessage = 'Lernen oder testen?';
+const exitSkillMessage = `Bis bald!`; // 'Bis später! '
+const nextLearnItemMessage = 'Weiter?'
 
 // helpers
 
-
-function vmpToSsml(vmp) {
+function prepositionToSsml(vmp) {
 	const art = vmp.art === 'D' ? 'plus Dativ' : 'plus Akkusativ';
 	return `<p>${vmp.verb} ${vmp.prep}. ${art}.</p><p>${vmp.sampl}</p>`
 }
 
+function generateLearnResponse(handlerInput, prepIndex) {
+  const prep = PREPOSITIONS[prepIndex];
+  const speechText = prepositionToSsml(prep);
+  const repromptText = nextLearnItemMessage;
+  const cardTitle = `${prep.verb} ${prep.prep} (+${prep.art})`;
+  const cardText = prep.sampl;
 
-// custom intents
+  return handlerInput.responseBuilder
+    .speak(speechText)
+    .reprompt(repromptText)
+    .withSimpleCard(cardTitle, cardText)
+    .getResponse();
+}
 
+function ofIntent(handlerInput, intentName) {
+  const { request } = handlerInput.requestEnvelope;
 
-const LearnVMPIntentHandler = {
-  canHandle(handlerInput) {
-    const { request } = handlerInput.requestEnvelope;
-    return request.type === 'IntentRequest'
-      && (
-        request.intent.name === 'LearnVMPIntent'
-        || request.intent.name === 'NextVMPIntent'
-      );
-  },
-  handle(handlerInput) {
+  if (request.type !== 'IntentRequest')
+    return false;
 
-	  const index = Math.floor(Math.random() * VMP.length);
-    const vmp = VMP[index];
-    const speechText = vmpToSsml(vmp);
-    const repromptText = Math.random() < .5 ? 'Weiter? ' : 'Nächste Präposition? ';
-    const cardTitle = `${vmp.verb} ${vmp.prep} (+${vmp.art})`;
-    const cardText = vmp.sampl;
+  if (Array.isArray(intentName)) {
+    return intentName.indexOf(request.intent.name) >= 0;
+  }
 
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .reprompt(repromptText)
-      .withSimpleCard(cardTitle, cardText)
-      .getResponse();
-  },
-};
+  return request.intent.name === intentName;
+}
 
+function getAttributes(handlerInput) {
+  return handlerInput.attributesManager.getSessionAttributes();
+}
 
-// standard intents
+function setAttributes(handlerInput, additionalAttributes) {
+    handlerInput.attributesManager.setSessionAttributes({
+      ...getAttributes(handlerInput),
+      ...additionalAttributes,
+    });
+}
 
+// intents
 
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
+    console.log('check launch');
     const { request } = handlerInput.requestEnvelope;
     return request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-		const speechText = 'Herzlich willkommen! Wolltest du ein paar neue Präpositionen lernen? ';
-		const repromptText = 'Einfach sag - Las uns lernen! ';
+		const speechText = welcomeMessage + ' ' + learnOrTestMessage;
+    const repromptText = speechText;
 
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -65,51 +82,96 @@ const LaunchRequestHandler = {
   },
 };
 
-const HelpIntentHandler = {
+const StartLearnIntentHandler = {
   canHandle(handlerInput) {
-    const { request } = handlerInput.requestEnvelope;
-    return request.type === 'IntentRequest'
-      && request.intent.name === 'AMAZON.HelpIntent'
-      && request.intent.name === 'AMAZON.FallbackIntent';
+    console.log('check 1');
+    const state = getAttributes(handlerInput).state;
+    return (
+      ofIntent(handlerInput, 'StartLearnIntent')
+      && state !== states.LEARN
+      && state !== states.TEST
+    );
   },
   handle(handlerInput) {
-		const speechText = 'Einfach sag - Las uns lernen! ';
+    const index = Math.floor(Math.random() * PREPOSITIONS.length);
+    return generateLearnResponse(handlerInput, index);
+  },
+};
+
+const LearnIntentHandler = {
+  canHandle(handlerInput) {
+    console.log('check 2');
+    const { request, attributesManager } = handlerInput.requestEnvelope;
+    const attributes = attributesManager.getSessionAttributes();
+    return ofIntent(request, 'LearnIntent');
+  },
+  handle(handlerInput) {
+    const index = Math.floor(Math.random() * PREPOSITIONS.length);
+    setAttributes({
+      state: states.LEARN,
+      learnIndex: index,
+    });
+    return generateLearnResponse(handlerInput, index);
+  },
+};
+
+const RepeatHandler = {
+  canHandle(handlerInput) {
+    console.log('check 3');
+    const state = getAttributes(handlerInput).state;
+    return (
+      ofIntent(handlerInput, 'AMAZON.RepeatHandler')
+      && state !== states.LEARN
+    );
+  },
+  handle(handlerInput) {
+    const index = getAttributes(handlerInput).learnIndex;
+    return generateLearnResponse(handlerInput, index);
+  },
+};
+
+const HelpIntentHandler = {
+  canHandle(handlerInput) {
+    console.log('check 4');
+    return ofIntent(handlerInput, ['AMAZON.HelpIntent', 'AMAZON.FallbackIntent']);
+  },
+  handle(handlerInput) {
+    const state = getAttributes(handlerInput).state;
+    let speechText;
+
+    if (state === states.LEARN) {
+      speechText = nextLearnItemMessage;
+    } else {
+      speechText = learnOrTestMessage;
+    }
 
     return handlerInput.responseBuilder
       .speak(speechText)
       .reprompt(speechText)
-      .withSimpleCard('Biate', speechText)
+      .withSimpleCard(generalCardTitle, speechText)
       .getResponse();
   },
 };
 
-const CancelAndStopIntentHandler = {
+const ExitHandler = {
   canHandle(handlerInput) {
-    const { request } = handlerInput.requestEnvelope;
-    return request.type === 'IntentRequest'
-      && (request.intent.name === 'AMAZON.CancelIntent'
-        || request.intent.name === 'AMAZON.StopIntent');
+    console.log('check 5');
+    return ofIntent(handlerInput, ['AMAZON.StopIntent', 'AMAZON.PauseIntent', 'AMAZON.CancelIntent']);
   },
   handle(handlerInput) {
-    const speechText = 'Bis später! ';
-
     return handlerInput.responseBuilder
-      .speak(speechText)
-      .withSimpleCard('Biate', speechText)
+      .speak(exitSkillMessage)
       .getResponse();
   },
 };
-
-// system intents
 
 const SessionEndedRequestHandler = {
   canHandle(handlerInput) {
-    const { request } = handlerInput.requestEnvelope;
-    return request.type === 'SessionEndedRequest';
+    console.log("Inside SessionEndedRequestHandler");
+    return handlerInput.requestEnvelope.request.type === 'SessionEndedRequest';
   },
   handle(handlerInput) {
-    console.log(`<lang xml:lang="en-US">Session ended with reason: ${handlerInput.requestEnvelope.request.reason}</lang>`);
-
+    console.log(`Session ended with reason: ${JSON.stringify(handlerInput.requestEnvelope)}`);
     return handlerInput.responseBuilder.getResponse();
   },
 };
@@ -128,19 +190,19 @@ const ErrorHandler = {
   },
 };
 
-
 // building
-
 
 const skillBuilder = Alexa.SkillBuilders.custom();
 
 exports.handler = skillBuilder
   .addRequestHandlers(
-    LearnVMPIntentHandler,
     LaunchRequestHandler,
+    StartLearnIntentHandler,
+    RepeatHandler, // repeat learning-item or question
+    LearnIntentHandler,
     HelpIntentHandler,
-    CancelAndStopIntentHandler,
-    SessionEndedRequestHandler
+    SessionEndedRequestHandler,
+    ExitHandler,
   )
   .addErrorHandlers(ErrorHandler)
   .lambda();
