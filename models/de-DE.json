@@ -4,37 +4,25 @@
       "invocationName": "beate",
       "intents": [
         {
-          "name": "StartLearnIntent",
-          "samples": [
-            "Lernen",
-            "Las uns lernen",
-            "Lernen wir heute"
-          ]
-        },
-        {
           "name": "LearnIntent",
           "samples": [
-            "Lernen",
-            "Las uns lernen",
-            "Lernen wir heute"
+            "Lernen"
           ]
         },
         {
-          "name": "NextVMPIntent",
-          "slots": [],
-          "samples": [
-            "los gehts",
-            "weiter",
-            "nächste präposition",
-            "nächste"
-          ]
-        },
-        {
-          "name": "AMAZON.FallbackIntent",
+          "name": "AMAZON.HelpIntent",
           "samples": []
         },
         {
-          "name": "AMAZON.ResumeIntent",
+          "name": "AMAZON.NextIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.RepeatIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.FallbackIntent",
           "samples": []
         },
         {
@@ -42,7 +30,7 @@
           "samples": []
         },
         {
-          "name": "AMAZON.HelpIntent",
+          "name": "AMAZON.PauseIntent",
           "samples": []
         },
         {

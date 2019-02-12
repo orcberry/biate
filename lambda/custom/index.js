@@ -65,7 +65,6 @@ function setAttributes(handlerInput, additionalAttributes) {
 
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
-    console.log('check launch');
     const { request } = handlerInput.requestEnvelope;
     return request.type === 'LaunchRequest';
   },
@@ -82,32 +81,36 @@ const LaunchRequestHandler = {
   },
 };
 
-const StartLearnIntentHandler = {
+const LearnIntentHandler = {
   canHandle(handlerInput) {
-    console.log('check 1');
     const state = getAttributes(handlerInput).state;
     return (
-      ofIntent(handlerInput, 'StartLearnIntent')
+      ofIntent(handlerInput, 'LearnIntent')
       && state !== states.LEARN
       && state !== states.TEST
     );
   },
   handle(handlerInput) {
     const index = Math.floor(Math.random() * PREPOSITIONS.length);
+    setAttributes(handlerInput, {
+      state: states.LEARN,
+      learnIndex: index,
+    });
     return generateLearnResponse(handlerInput, index);
   },
 };
 
-const LearnIntentHandler = {
+const NextHandler = {
   canHandle(handlerInput) {
-    console.log('check 2');
-    const { request, attributesManager } = handlerInput.requestEnvelope;
-    const attributes = attributesManager.getSessionAttributes();
-    return ofIntent(request, 'LearnIntent');
+    const state = getAttributes(handlerInput).state;
+    return (
+      ofIntent(handlerInput, 'AMAZON.NextIntent')
+      && state === states.LEARN
+    );
   },
   handle(handlerInput) {
     const index = Math.floor(Math.random() * PREPOSITIONS.length);
-    setAttributes({
+    setAttributes(handlerInput, {
       state: states.LEARN,
       learnIndex: index,
     });
@@ -117,11 +120,10 @@ const LearnIntentHandler = {
 
 const RepeatHandler = {
   canHandle(handlerInput) {
-    console.log('check 3');
     const state = getAttributes(handlerInput).state;
     return (
-      ofIntent(handlerInput, 'AMAZON.RepeatHandler')
-      && state !== states.LEARN
+      ofIntent(handlerInput, 'AMAZON.RepeatIntent')
+      && state === states.LEARN
     );
   },
   handle(handlerInput) {
@@ -132,7 +134,6 @@ const RepeatHandler = {
 
 const HelpIntentHandler = {
   canHandle(handlerInput) {
-    console.log('check 4');
     return ofIntent(handlerInput, ['AMAZON.HelpIntent', 'AMAZON.FallbackIntent']);
   },
   handle(handlerInput) {
@@ -155,7 +156,6 @@ const HelpIntentHandler = {
 
 const ExitHandler = {
   canHandle(handlerInput) {
-    console.log('check 5');
     return ofIntent(handlerInput, ['AMAZON.StopIntent', 'AMAZON.PauseIntent', 'AMAZON.CancelIntent']);
   },
   handle(handlerInput) {
@@ -197,12 +197,12 @@ const skillBuilder = Alexa.SkillBuilders.custom();
 exports.handler = skillBuilder
   .addRequestHandlers(
     LaunchRequestHandler,
-    StartLearnIntentHandler,
-    RepeatHandler, // repeat learning-item or question
     LearnIntentHandler,
+    NextHandler,
+    RepeatHandler,
     HelpIntentHandler,
-    SessionEndedRequestHandler,
     ExitHandler,
+    SessionEndedRequestHandler,
   )
   .addErrorHandlers(ErrorHandler)
   .lambda();
