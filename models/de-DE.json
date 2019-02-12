@@ -22,15 +22,15 @@
           "samples": []
         },
         {
+          "name": "AMAZON.YesIntent",
+          "samples": []
+        },
+        {
           "name": "AMAZON.FallbackIntent",
           "samples": []
         },
         {
           "name": "AMAZON.CancelIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.PauseIntent",
           "samples": []
         },
         {

@@ -69,7 +69,7 @@ const LaunchRequestHandler = {
     return request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-		const speechText = welcomeMessage + ' ' + learnOrTestMessage;
+    const speechText = welcomeMessage + ' ' + learnOrTestMessage;
     const repromptText = speechText;
 
     return handlerInput.responseBuilder
@@ -104,7 +104,7 @@ const NextHandler = {
   canHandle(handlerInput) {
     const state = getAttributes(handlerInput).state;
     return (
-      ofIntent(handlerInput, 'AMAZON.NextIntent')
+      ofIntent(handlerInput, ['AMAZON.NextIntent', 'AMAZON.YesIntent'])
       && state === states.LEARN
     );
   },
@@ -156,7 +156,7 @@ const HelpIntentHandler = {
 
 const ExitHandler = {
   canHandle(handlerInput) {
-    return ofIntent(handlerInput, ['AMAZON.StopIntent', 'AMAZON.PauseIntent', 'AMAZON.CancelIntent']);
+    return ofIntent(handlerInput, ['AMAZON.StopIntent', 'AMAZON.CancelIntent']);
   },
   handle(handlerInput) {
     return handlerInput.responseBuilder
