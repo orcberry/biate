@@ -1,405 +1,405 @@
 {
   "interactionModel": {
-    "languageModel": {
-      "invocationName": "beate",
-      "intents": [
-        {
-          "name": "LearnIntent",
-          "slots": [],
-          "samples": [
-            "Lernen"
-          ]
-        },
-        {
-          "name": "AMAZON.HelpIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.NextIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.RepeatIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.YesIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.FallbackIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.CancelIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.StopIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.NavigateHomeIntent",
-          "samples": []
-        },
-        {
-          "name": "TestIntent",
-          "slots": [],
-          "samples": [
-            "Testen"
-          ]
-        },
-        {
-          "name": "TestAnswerIntent",
-          "slots": [
-            {
-              "name": "preposition",
-              "type": "Preposition",
-              "samples": [
-                "mit {preposition}",
-                "{preposition}"
-              ]
-            },
-            {
-              "name": "artikel",
-              "type": "Artikel",
-              "samples": [
-                "mit der {artikel}",
-                "mit {artikel}",
-                "{artikel}"
-              ]
-            }
+      "languageModel": {
+          "invocationName": "beate",
+          "intents": [
+              {
+                  "name": "LearnIntent",
+                  "slots": [],
+                  "samples": [
+                      "Lernen"
+                  ]
+              },
+              {
+                  "name": "AMAZON.HelpIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.NextIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.RepeatIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.YesIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.FallbackIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.CancelIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.StopIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.NavigateHomeIntent",
+                  "samples": []
+              },
+              {
+                  "name": "TestIntent",
+                  "slots": [],
+                  "samples": [
+                      "Testen"
+                  ]
+              },
+              {
+                  "name": "TestAnswerIntent",
+                  "slots": [
+                      {
+                          "name": "preposition",
+                          "type": "Preposition",
+                          "samples": [
+                              "mit {preposition}",
+                              "{preposition}"
+                          ]
+                      },
+                      {
+                          "name": "artikel",
+                          "type": "Artikel",
+                          "samples": [
+                              "mit der {artikel}",
+                              "mit {artikel}",
+                              "{artikel}"
+                          ]
+                      }
+                  ],
+                  "samples": [
+                      "mit",
+                      "{artikel}",
+                      "{preposition}",
+                      "{preposition} mit {artikel}"
+                  ]
+              }
           ],
-          "samples": [
-            "mit",
-            "{artikel}",
-            "{preposition}",
-            "{preposition} mit {artikel}"
+          "types": [
+              {
+                  "name": "Preposition",
+                  "values": [
+                      {
+                          "id": "ab",
+                          "name": {
+                              "value": "ab"
+                          }
+                      },
+                      {
+                          "id": "am",
+                          "name": {
+                              "value": "am"
+                          }
+                      },
+                      {
+                          "id": "an",
+                          "name": {
+                              "value": "an"
+                          }
+                      },
+                      {
+                          "id": "anstatt",
+                          "name": {
+                              "value": "anstatt"
+                          }
+                      },
+                      {
+                          "id": "auf",
+                          "name": {
+                              "value": "auf"
+                          }
+                      },
+                      {
+                          "id": "aus",
+                          "name": {
+                              "value": "aus"
+                          }
+                      },
+                      {
+                          "id": "ausser",
+                          "name": {
+                              "value": "ausser"
+                          }
+                      },
+                      {
+                          "id": "ausserhalb",
+                          "name": {
+                              "value": "außerhalb"
+                          }
+                      },
+                      {
+                          "id": "bei",
+                          "name": {
+                              "value": "bei"
+                          }
+                      },
+                      {
+                          "id": "beiderseits",
+                          "name": {
+                              "value": "beiderseits"
+                          }
+                      },
+                      {
+                          "id": "bis",
+                          "name": {
+                              "value": "bis"
+                          }
+                      },
+                      {
+                          "id": "dank",
+                          "name": {
+                              "value": "dank"
+                          }
+                      },
+                      {
+                          "id": "diesseits",
+                          "name": {
+                              "value": "diesseits"
+                          }
+                      },
+                      {
+                          "id": "durch",
+                          "name": {
+                              "value": "durch"
+                          }
+                      },
+                      {
+                          "id": "entgegen",
+                          "name": {
+                              "value": "entgegen"
+                          }
+                      },
+                      {
+                          "id": "entlang",
+                          "name": {
+                              "value": "entlang"
+                          }
+                      },
+                      {
+                          "id": "fuer",
+                          "name": {
+                              "value": "für"
+                          }
+                      },
+                      {
+                          "id": "gegen",
+                          "name": {
+                              "value": "gegen"
+                          }
+                      },
+                      {
+                          "id": "gegenueber",
+                          "name": {
+                              "value": "gegenüber"
+                          }
+                      },
+                      {
+                          "id": "in",
+                          "name": {
+                              "value": "in"
+                          }
+                      },
+                      {
+                          "id": "innerhalb",
+                          "name": {
+                              "value": "innerhalb"
+                          }
+                      },
+                      {
+                          "id": "jenseits",
+                          "name": {
+                              "value": "jenseits"
+                          }
+                      },
+                      {
+                          "id": "mit",
+                          "name": {
+                              "value": "mit"
+                          }
+                      },
+                      {
+                          "id": "nach",
+                          "name": {
+                              "value": "nach"
+                          }
+                      },
+                      {
+                          "id": "oberhalb",
+                          "name": {
+                              "value": "oberhalb"
+                          }
+                      },
+                      {
+                          "id": "ohne",
+                          "name": {
+                              "value": "ohne"
+                          }
+                      },
+                      {
+                          "id": "seit",
+                          "name": {
+                              "value": "seit"
+                          }
+                      },
+                      {
+                          "id": "statt",
+                          "name": {
+                              "value": "statt"
+                          }
+                      },
+                      {
+                          "id": "trotz",
+                          "name": {
+                              "value": "trotz"
+                          }
+                      },
+                      {
+                          "id": "ueber",
+                          "name": {
+                              "value": "über"
+                          }
+                      },
+                      {
+                          "id": "um",
+                          "name": {
+                              "value": "um"
+                          }
+                      },
+                      {
+                          "id": "unter",
+                          "name": {
+                              "value": "unter"
+                          }
+                      },
+                      {
+                          "id": "unweit",
+                          "name": {
+                              "value": "unweit"
+                          }
+                      },
+                      {
+                          "id": "von",
+                          "name": {
+                              "value": "von"
+                          }
+                      },
+                      {
+                          "id": "vor",
+                          "name": {
+                              "value": "vor"
+                          }
+                      },
+                      {
+                          "id": "waehrend",
+                          "name": {
+                              "value": "während"
+                          }
+                      },
+                      {
+                          "id": "wegen",
+                          "name": {
+                              "value": "wegen"
+                          }
+                      },
+                      {
+                          "id": "zu",
+                          "name": {
+                              "value": "zu"
+                          }
+                      }
+                  ]
+              },
+              {
+                  "name": "Artikel",
+                  "values": [
+                      {
+                          "id": "N",
+                          "name": {
+                              "value": "Nominativ"
+                          }
+                      },
+                      {
+                          "id": "G",
+                          "name": {
+                              "value": "Genetiv"
+                          }
+                      },
+                      {
+                          "id": "A",
+                          "name": {
+                              "value": "Akkusativ"
+                          }
+                      },
+                      {
+                          "id": "D",
+                          "name": {
+                              "value": "Dativ"
+                          }
+                      }
+                  ]
+              }
           ]
-        }
-      ],
-      "types": [
-        {
-          "name": "Preposition",
-          "values": [
-            {
-              "id": "ab",
-              "name": {
-                "value": "ab"
-              }
-            },
-            {
-              "id": "am",
-              "name": {
-                "value": "am"
-              }
-            },
-            {
-              "id": "an",
-              "name": {
-                "value": "an"
-              }
-            },
-            {
-              "id": "anstatt",
-              "name": {
-                "value": "anstatt"
-              }
-            },
-            {
-              "id": "auf",
-              "name": {
-                "value": "auf"
-              }
-            },
-            {
-              "id": "aus",
-              "name": {
-                "value": "aus"
-              }
-            },
-            {
-              "id": "ausser",
-              "name": {
-                "value": "ausser"
-              }
-            },
-            {
-              "id": "ausserhalb",
-              "name": {
-                "value": "außerhalb"
-              }
-            },
-            {
-              "id": "bei",
-              "name": {
-                "value": "bei"
-              }
-            },
-            {
-              "id": "beiderseits",
-              "name": {
-                "value": "beiderseits"
-              }
-            },
-            {
-              "id": "bis",
-              "name": {
-                "value": "bis"
-              }
-            },
-            {
-              "id": "dank",
-              "name": {
-                "value": "dank"
-              }
-            },
-            {
-              "id": "diesseits",
-              "name": {
-                "value": "diesseits"
-              }
-            },
-            {
-              "id": "durch",
-              "name": {
-                "value": "durch"
-              }
-            },
-            {
-              "id": "entgegen",
-              "name": {
-                "value": "entgegen"
-              }
-            },
-            {
-              "id": "entlang",
-              "name": {
-                "value": "entlang"
-              }
-            },
-            {
-              "id": "fuer",
-              "name": {
-                "value": "für"
-              }
-            },
-            {
-              "id": "gegen",
-              "name": {
-                "value": "gegen"
-              }
-            },
-            {
-              "id": "gegenueber",
-              "name": {
-                "value": "gegenüber"
-              }
-            },
-            {
-              "id": "in",
-              "name": {
-                "value": "in"
-              }
-            },
-            {
-              "id": "innerhalb",
-              "name": {
-                "value": "innerhalb"
-              }
-            },
-            {
-              "id": "jenseits",
-              "name": {
-                "value": "jenseits"
-              }
-            },
-            {
-              "id": "mit",
-              "name": {
-                "value": "mit"
-              }
-            },
-            {
-              "id": "nach",
-              "name": {
-                "value": "nach"
-              }
-            },
-            {
-              "id": "oberhalb",
-              "name": {
-                "value": "oberhalb"
-              }
-            },
-            {
-              "id": "ohne",
-              "name": {
-                "value": "ohne"
-              }
-            },
-            {
-              "id": "seit",
-              "name": {
-                "value": "seit"
-              }
-            },
-            {
-              "id": "statt",
-              "name": {
-                "value": "statt"
-              }
-            },
-            {
-              "id": "trotz",
-              "name": {
-                "value": "trotz"
-              }
-            },
-            {
-              "id": "ueber",
-              "name": {
-                "value": "über"
-              }
-            },
-            {
-              "id": "um",
-              "name": {
-                "value": "um"
-              }
-            },
-            {
-              "id": "unter",
-              "name": {
-                "value": "unter"
-              }
-            },
-            {
-              "id": "unweit",
-              "name": {
-                "value": "unweit"
-              }
-            },
-            {
-              "id": "von",
-              "name": {
-                "value": "von"
-              }
-            },
-            {
-              "id": "vor",
-              "name": {
-                "value": "vor"
-              }
-            },
-            {
-              "id": "waehrend",
-              "name": {
-                "value": "während"
-              }
-            },
-            {
-              "id": "wegen",
-              "name": {
-                "value": "wegen"
-              }
-            },
-            {
-              "id": "zu",
-              "name": {
-                "value": "zu"
-              }
-            }
-          ]
-        },
-        {
-          "name": "Artikel",
-          "values": [
-            {
-              "id": "N",
-              "name": {
-                "value": "Nominativ"
-              }
-            },
-            {
-              "id": "G",
-              "name": {
-                "value": "Genetiv"
-              }
-            },
-            {
-              "id": "A",
-              "name": {
-                "value": "Akkusativ"
-              }
-            },
-            {
-              "id": "D",
-              "name": {
-                "value": "Dativ"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    "dialog": {
-      "intents": [
-        {
-          "name": "TestAnswerIntent",
-          "confirmationRequired": false,
-          "prompts": {},
-          "slots": [
-            {
-              "name": "preposition",
-              "type": "Preposition",
-              "confirmationRequired": false,
-              "elicitationRequired": true,
-              "prompts": {
-                "elicitation": "Elicit.Slot.1380510938055.185980627652"
-              }
-            },
-            {
-              "name": "artikel",
-              "type": "Artikel",
-              "confirmationRequired": false,
-              "elicitationRequired": true,
-              "prompts": {
-                "elicitation": "Elicit.Slot.1380510938055.1315351072117"
-              }
-            }
-          ]
-        }
-      ],
-      "delegationStrategy": "ALWAYS"
-    },
-    "prompts": [
-      {
-        "id": "Elicit.Slot.1380510938055.185980627652",
-        "variations": [
-          {
-            "type": "PlainText",
-            "value": "Mit welcher Präposition?"
-          },
-          {
-            "type": "PlainText",
-            "value": "Welche Präposition?"
-          }
-        ]
       },
-      {
-        "id": "Elicit.Slot.1380510938055.1315351072117",
-        "variations": [
+      "dialog": {
+          "intents": [
+              {
+                  "name": "TestAnswerIntent",
+                  "confirmationRequired": false,
+                  "prompts": {},
+                  "slots": [
+                      {
+                          "name": "preposition",
+                          "type": "Preposition",
+                          "confirmationRequired": false,
+                          "elicitationRequired": true,
+                          "prompts": {
+                              "elicitation": "Elicit.Slot.1380510938055.185980627652"
+                          }
+                      },
+                      {
+                          "name": "artikel",
+                          "type": "Artikel",
+                          "confirmationRequired": false,
+                          "elicitationRequired": true,
+                          "prompts": {
+                              "elicitation": "Elicit.Slot.1380510938055.1315351072117"
+                          }
+                      }
+                  ]
+              }
+          ],
+          "delegationStrategy": "ALWAYS"
+      },
+      "prompts": [
           {
-            "type": "PlainText",
-            "value": "Mit welcher Artikel?"
+              "id": "Elicit.Slot.1380510938055.185980627652",
+              "variations": [
+                  {
+                      "type": "PlainText",
+                      "value": "Mit welcher Präposition?"
+                  },
+                  {
+                      "type": "PlainText",
+                      "value": "Welche Präposition?"
+                  }
+              ]
           },
           {
-            "type": "PlainText",
-            "value": "Welche Artikel?"
+              "id": "Elicit.Slot.1380510938055.1315351072117",
+              "variations": [
+                  {
+                      "type": "PlainText",
+                      "value": "Mit welcher Artikel?"
+                  },
+                  {
+                      "type": "PlainText",
+                      "value": "Welche Artikel?"
+                  }
+              ]
           }
-        ]
-      }
-    ]
+      ]
   }
 }
