@@ -15,6 +15,9 @@ const welcomeMessage = `Guten Morgen!`;
 const learnOrTestMessage = 'Lernen oder testen?';
 const exitSkillMessage = `Bis bald!`; // 'Bis später! '
 const nextLearnItemMessage = 'Weiter?'
+const testStartMessage = `Zehn Fragen. Los geht's!`;
+const testHelpMessage = `Nennen sie die passende Ppräposition mit dem Artikel. Zum Beispiel für abhängen <break time="1s"/> von <break time="1s"/> Dativ`;
+const testRepromptMessage = 'Sagen Sie';
 
 // helpers
 
@@ -29,6 +32,26 @@ function generateLearnResponse(handlerInput, prepIndex) {
   const repromptText = nextLearnItemMessage;
   const cardTitle = `${prep.verb} ${prep.prep} (+${prep.art})`;
   const cardText = prep.sampl;
+
+  return handlerInput.responseBuilder
+    .speak(speechText)
+    .reprompt(repromptText)
+    .withSimpleCard(cardTitle, cardText)
+    .getResponse();
+}
+
+function generateTestResponse(handlerInput, prepIndex, isFirstQuestion) {
+  const prep = PREPOSITIONS[prepIndex];
+  const speechText = isFirstQuestion
+  ? `${testHelpMessage}
+    <break time="1s"/>
+    ${testStartMessage}
+    <break time="2s"/>
+    ${prep.verb}`
+  : `${prep.verb}`;
+  const repromptText = testHelpMessage;
+  const cardTitle = `Test`;
+  const cardText = prep.verb;
 
   return handlerInput.responseBuilder
     .speak(speechText)
@@ -100,6 +123,67 @@ const LearnIntentHandler = {
   },
 };
 
+const TestRequestHandler = {
+  canHandle(handlerInput) {
+    const state = getAttributes(handlerInput).state;
+    return (
+      ofIntent(handlerInput, 'TestIntent')
+      && state !== states.LEARN
+      && state !== states.TEST
+    );
+  },
+  handle(handlerInput) {
+    const index = Math.floor(Math.random() * PREPOSITIONS.length);
+
+    setAttributes(handlerInput, {
+      state: states.TEST,
+      testData: [index],
+    });
+
+    return generateTestResponse(handlerInput, index, true);
+  },
+};
+
+const TestAnswerHandler = {
+  canHandle(handlerInput) {
+    const state = getAttributes(handlerInput).state;
+    return (
+      ofIntent(handlerInput, 'TestAnswerIntent')
+      && state === states.TEST
+    );
+  },
+  handle(handlerInput) {
+    const state = getAttributes(handlerInput).state;
+    const isDone = testData.length === 3;
+
+    if (isDone) {
+
+      setAttributes(handlerInput, {
+        state: '',
+      });
+
+      return handlerInput.responseBuilder
+      .speak('Finish')
+      .reprompt('Finish')
+      .withSimpleCard('Finish', 'Finish')
+      .getResponse();
+
+    } else {
+
+      const index = Math.floor(Math.random() * PREPOSITIONS.length);
+      const testData = state.testData;
+
+      console.log(handlerInput);
+
+      setAttributes(handlerInput, {
+        testData: [...testData, index],
+      });
+
+      return generateTestResponse(handlerInput, index, false);
+    }
+  },
+};
+
 const NextHandler = {
   canHandle(handlerInput) {
     const state = getAttributes(handlerInput).state;
@@ -111,7 +195,6 @@ const NextHandler = {
   handle(handlerInput) {
     const index = Math.floor(Math.random() * PREPOSITIONS.length);
     setAttributes(handlerInput, {
-      state: states.LEARN,
       learnIndex: index,
     });
     return generateLearnResponse(handlerInput, index);
@@ -198,6 +281,8 @@ exports.handler = skillBuilder
   .addRequestHandlers(
     LaunchRequestHandler,
     LearnIntentHandler,
+    TestRequestHandler,
+    TestAnswerHandler,
     NextHandler,
     RepeatHandler,
     HelpIntentHandler,
