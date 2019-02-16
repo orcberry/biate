@@ -6,6 +6,7 @@
   "scripts": {
     "test-launch": "lambda-local -l index.js -e ../../examples/LaunchRequest.json",
     "test-repeat": "lambda-local -l index.js -e ../../examples/AMAZON.RepeatIntent.json",
+    "test-answer": "lambda-local -l index.js -e ../../examples/TestAnswerIntent.json",
     "test": "lambda-local -l index.js -e ../../examples/LearnIntent.json"
   },
   "author": "",

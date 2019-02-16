@@ -71,11 +71,9 @@
                       }
                   ],
                   "samples": [
-                      "mit",
                       "{artikel}",
                       "{preposition}",
                       "{preposition} {artikel}",
-                      "{artikel} {preposition}",
                       "{preposition} mit {artikel}"
                   ]
               }

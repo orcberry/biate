@@ -9,15 +9,19 @@ const states = {
   TEST: `TEST`,
 };
 
+const QUESTION_COUNT = 3;
 const generalCardTitle = 'Biate';
-
 const welcomeMessage = `Guten Morgen!`;
 const learnOrTestMessage = 'Lernen oder testen?';
 const exitSkillMessage = `Bis bald!`; // 'Bis später! '
 const nextLearnItemMessage = 'Weiter?'
 const testStartMessage = `Zehn Fragen. Los geht's!`;
-const testHelpMessage = `Nennen sie die passende Ppräposition mit dem Artikel. Zum Beispiel für abhängen <break time="1s"/> von <break time="1s"/> Dativ`;
+const testHelpMessage = `Nennen sie die passende Ppräposition mit dem Artikel. Zum Beispiel für abhängen <break time="400ms"/> von <break time="200ms"/> Dativ`;
 const testRepromptMessage = 'Sagen Sie';
+const correctAnswerMessage = 'Richtig!';
+const almostCorrectAnswerMessage = 'Fast!';
+const wrontAnswerMessage = 'Falsch!';
+
 
 // helpers
 
@@ -40,15 +44,9 @@ function generateLearnResponse(handlerInput, prepIndex) {
     .getResponse();
 }
 
-function generateTestResponse(handlerInput, prepIndex, isFirstQuestion) {
+function generateTestResponse(handlerInput, prepIndex, speechText = '') {
   const prep = PREPOSITIONS[prepIndex];
-  const speechText = isFirstQuestion
-  ? `${testHelpMessage}
-    <break time="1s"/>
-    ${testStartMessage}
-    <break time="2s"/>
-    ${prep.verb}`
-  : `${prep.verb}`;
+  speechText += `${prep.verb}`;
   const repromptText = testHelpMessage;
   const cardTitle = `Test`;
   const cardText = prep.verb;
@@ -82,6 +80,17 @@ function setAttributes(handlerInput, additionalAttributes) {
       ...getAttributes(handlerInput),
       ...additionalAttributes,
     });
+}
+
+/**
+ * Returns lowercased slot value OR empty string
+ * @param {HandlerInput} handlerInput
+ * @param {string} name
+ */
+function getSlot(handlerInput , name) {
+  const slot = handlerInput.requestEnvelope.request.intent.slots[name] || '';
+  const value = slot.value;
+  return value && value.toLowerCase();
 }
 
 // intents
@@ -123,6 +132,7 @@ const LearnIntentHandler = {
   },
 };
 
+// first question
 const TestRequestHandler = {
   canHandle(handlerInput) {
     const state = getAttributes(handlerInput).state;
@@ -134,13 +144,16 @@ const TestRequestHandler = {
   },
   handle(handlerInput) {
     const index = Math.floor(Math.random() * PREPOSITIONS.length);
-
+    const speechText = `${testHelpMessage}
+      <break time="400ms"/>
+      ${testStartMessage}
+      <break time="400ms"/>`;
     setAttributes(handlerInput, {
       state: states.TEST,
       testData: [index],
     });
 
-    return generateTestResponse(handlerInput, index, true);
+    return generateTestResponse(handlerInput, index, speechText);
   },
 };
 
@@ -153,33 +166,56 @@ const TestAnswerHandler = {
     );
   },
   handle(handlerInput) {
-    const state = getAttributes(handlerInput).state;
-    const isDone = testData.length === 3;
+    const attributes = getAttributes(handlerInput);
+    const state = attributes.state;
+    const testData = attributes.testData;
+    const questionPrep = PREPOSITIONS[testData[testData.length - 1]];
+    console.log('questionPrep', questionPrep.art.toLowerCase());
+    console.log(-1);
+    const answerPrep = {
+      prep: getSlot(handlerInput, 'preposition'),
+      art: getSlot(handlerInput, 'artikel'),
+    };
+    console.log(0);
+    const isCorrectPreposition = questionPrep.prep === answerPrep.prep;
+    const isCorrectArtikel = questionPrep.art.toLowerCase() === answerPrep.art[0];
+    const isLastQuestion = testData.length === QUESTION_COUNT;
+    let speechText = '';
 
-    if (isDone) {
+    console.log(1);
 
+    // generate answer result
+    if (isCorrectPreposition && isCorrectArtikel) {
+      speechText += correctAnswerMessage;
+    } else {
+      if (isCorrectPreposition || isCorrectArtikel) {
+        speechText += almostCorrectAnswerMessage;
+      } else {
+        speechText += wrontAnswerMessage;
+      }
+      speechText += ` <break time="250ms"/> ${prepositionToSsml(questionPrep)}`;
+    }
+
+    if (isLastQuestion) {
+      // generate test results
       setAttributes(handlerInput, {
         state: '',
       });
 
       return handlerInput.responseBuilder
-      .speak('Finish')
+      .speak(speechText + ' <break time="250ms"/> Finish!')
       .reprompt('Finish')
       .withSimpleCard('Finish', 'Finish')
       .getResponse();
-
     } else {
-
+      // generate next question
       const index = Math.floor(Math.random() * PREPOSITIONS.length);
-      const testData = state.testData;
-
-      console.log(handlerInput);
 
       setAttributes(handlerInput, {
         testData: [...testData, index],
       });
 
-      return generateTestResponse(handlerInput, index, false);
+      return generateTestResponse(handlerInput, index, speechText);
     }
   },
 };
