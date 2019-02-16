@@ -17,10 +17,11 @@ const exitSkillMessage = `Bis bald!`; // 'Bis später! '
 const nextLearnItemMessage = 'Weiter?'
 const testStartMessage = `Zehn Fragen. Los geht's!`;
 const testHelpMessage = `Nennen sie die passende Ppräposition mit dem Artikel. Zum Beispiel für abhängen <break time="400ms"/> von <break time="200ms"/> Dativ`;
-const testRepromptMessage = 'Sagen Sie';
 const correctAnswerMessage = 'Richtig!';
 const almostCorrectAnswerMessage = 'Fast!';
 const wrontAnswerMessage = 'Falsch!';
+const testDoneMessage = 'Gut gemacht!';
+const testResultMessage = `Testergebnis ist {0}%.`;
 
 
 // helpers
@@ -150,7 +151,8 @@ const TestRequestHandler = {
       <break time="400ms"/>`;
     setAttributes(handlerInput, {
       state: states.TEST,
-      testData: [index],
+      testQuestions: [index],
+      testAnswers: [],
     });
 
     return generateTestResponse(handlerInput, index, speechText);
@@ -168,51 +170,59 @@ const TestAnswerHandler = {
   handle(handlerInput) {
     const attributes = getAttributes(handlerInput);
     const state = attributes.state;
-    const testData = attributes.testData;
-    const questionPrep = PREPOSITIONS[testData[testData.length - 1]];
-    console.log('questionPrep', questionPrep.art.toLowerCase());
-    console.log(-1);
+    const testQuestions = attributes.testQuestions;
+    const testAnswers = attributes.testAnswers;
+    const questionPrep = PREPOSITIONS[testQuestions[testQuestions.length - 1]];
     const answerPrep = {
       prep: getSlot(handlerInput, 'preposition'),
       art: getSlot(handlerInput, 'artikel'),
     };
-    console.log(0);
     const isCorrectPreposition = questionPrep.prep === answerPrep.prep;
     const isCorrectArtikel = questionPrep.art.toLowerCase() === answerPrep.art[0];
-    const isLastQuestion = testData.length === QUESTION_COUNT;
+    const isLastQuestion = testQuestions.length === QUESTION_COUNT;
     let speechText = '';
-
-    console.log(1);
 
     // generate answer result
     if (isCorrectPreposition && isCorrectArtikel) {
+      testAnswers.push(1);
       speechText += correctAnswerMessage;
+
     } else {
+      testAnswers.push(0);
+
       if (isCorrectPreposition || isCorrectArtikel) {
         speechText += almostCorrectAnswerMessage;
+
       } else {
         speechText += wrontAnswerMessage;
       }
+
       speechText += ` <break time="250ms"/> ${prepositionToSsml(questionPrep)}`;
     }
 
     if (isLastQuestion) {
       // generate test results
+      const correctCount = testAnswers.reduce((sum, n) => sum + n);
+      const correctPercents = Math.round((correctCount / QUESTION_COUNT) * 100);
+      const resultText = testResultMessage.replace('{0}', correctPercents);
+      speechText += `<break time="250ms"/> ${ resultText }`;
+
       setAttributes(handlerInput, {
         state: '',
       });
 
       return handlerInput.responseBuilder
-      .speak(speechText + ' <break time="250ms"/> Finish!')
-      .reprompt('Finish')
-      .withSimpleCard('Finish', 'Finish')
+      .speak(`${speechText} <break time="150ms"/> ${testDoneMessage}`)
+      .reprompt(learnOrTestMessage)
+      .withSimpleCard(generalCardTitle, resultText)
       .getResponse();
     } else {
       // generate next question
       const index = Math.floor(Math.random() * PREPOSITIONS.length);
 
       setAttributes(handlerInput, {
-        testData: [...testData, index],
+        testQuestions: [...testQuestions, index],
+        testAnswers: [...testAnswers],
       });
 
       return generateTestResponse(handlerInput, index, speechText);
