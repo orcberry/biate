@@ -14,11 +14,13 @@ const generalCardTitle = 'Biate';
 const welcomeMessage = `Guten Morgen!`;
 const learnOrTestMessage = 'Lernen oder testen?';
 const exitSkillMessage = `Bis bald!`; // 'Bis später! '
-const nextLearnItemMessage = 'Weiter?'
+const nextLearnItemMessage = 'Weiter?';
+const learnHelpMessage = 'Sag einfach weiter oder abbrechen';
 const testStartMessage = `Zehn Fragen. Los geht's!`;
-const testHelpMessage = `Nennen sie die passende Ppräposition mit dem Artikel. Zum Beispiel für abhängen <break time="400ms"/> von <break time="200ms"/> Dativ`;
+const testHelpMessage = `Nennen sie die passende Ppräposition mit dem Artikel. Zum Beispiel: von Dativ. `;
 const correctAnswerMessage = 'Richtig!';
 const almostCorrectAnswerMessage = 'Fast!';
+
 const wrontAnswerMessage = 'Falsch!';
 const testDoneMessage = 'Gut gemacht!';
 const testResultMessage = `Testergebnis ist {0}%.`;
@@ -287,7 +289,9 @@ const HelpIntentHandler = {
     let speechText;
 
     if (state === states.LEARN) {
-      speechText = nextLearnItemMessage;
+      speechText = learnHelpMessage;
+    } else if (state === states.TEST) {
+      speechText = testHelpMessage;
     } else {
       speechText = learnOrTestMessage;
     }
