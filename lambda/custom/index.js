@@ -9,18 +9,21 @@ const states = {
   TEST: `TEST`,
 };
 
-const QUESTION_COUNT = 3;
+const QUESTION_COUNT = 5;
 const generalCardTitle = 'Biate';
 const welcomeMessage = `Guten Morgen!`;
 const learnOrTestMessage = 'Lernen oder testen?';
 const exitSkillMessage = `Bis bald!`; // 'Bis später! '
 const nextLearnItemMessage = 'Weiter?';
 const learnHelpMessage = 'Sag einfach weiter oder abbrechen';
-const testStartMessage = `Zehn Fragen. Los geht's!`;
-const testHelpMessage = `Nennen sie die passende Ppräposition mit dem Artikel. Zum Beispiel: von Dativ. `;
+const testStartMessage = `Erste Frage von fünf: <break time="100ms"/>`;
+const testHelpMessage = `Nennen sie die passende Ppräposition mit dem Artikel. Zum Beispiel: von Dativ, oder auf Akkusativ. `;
 const correctAnswerMessage = 'Richtig!';
 const almostCorrectAnswerMessage = 'Fast!';
-
+const testCorrectAnswerCardText = 'Richtig 👍';
+const testWrongAnswerCardText = 'Korrekte Antwort: {0}';
+const testFirstQuestionCardText = 'Erste Frage: ';
+const testNextQuestionCardText = 'Nächste Frage: ';
 const wrontAnswerMessage = 'Falsch!';
 const testDoneMessage = 'Gut gemacht!';
 const testResultMessage = `Testergebnis ist {0}%.`;
@@ -28,9 +31,15 @@ const testResultMessage = `Testergebnis ist {0}%.`;
 
 // helpers
 
-function prepositionToSsml(vmp) {
+function prepositionToSsml(vmp, skipSample) {
 	const art = vmp.art === 'D' ? 'plus Dativ' : 'plus Akkusativ';
-	return `<p>${vmp.verb} ${vmp.prep}. ${art}.</p><p>${vmp.sampl}</p>`
+  let text = `<p>${vmp.verb} ${vmp.prep}. ${art}.</p>`;
+
+  if (!skipSample) {
+    text += `<p>${vmp.sampl}</p> `;
+  }
+
+  return text;
 }
 
 function generateLearnResponse(handlerInput, prepIndex) {
@@ -47,12 +56,13 @@ function generateLearnResponse(handlerInput, prepIndex) {
     .getResponse();
 }
 
-function generateTestResponse(handlerInput, prepIndex, speechText = '') {
+function generateTestResponse(handlerInput, prepIndex, speechText = '', cardText = '') {
   const prep = PREPOSITIONS[prepIndex];
   speechText += `${prep.verb}`;
   const repromptText = testHelpMessage;
   const cardTitle = `Test`;
-  const cardText = prep.verb;
+
+  cardText += prep.verb;
 
   return handlerInput.responseBuilder
     .speak(speechText)
@@ -147,17 +157,18 @@ const TestRequestHandler = {
   },
   handle(handlerInput) {
     const index = Math.floor(Math.random() * PREPOSITIONS.length);
+    let cardText = testHelpMessage + '\n' + testStartMessage + '\n\n' + testFirstQuestionCardText;
     const speechText = `${testHelpMessage}
-      <break time="400ms"/>
+      <break time="200ms"/>
       ${testStartMessage}
-      <break time="400ms"/>`;
+      <break time="200ms"/>`;
     setAttributes(handlerInput, {
       state: states.TEST,
       testQuestions: [index],
       testAnswers: [],
     });
 
-    return generateTestResponse(handlerInput, index, speechText);
+    return generateTestResponse(handlerInput, index, speechText, cardText);
   },
 };
 
@@ -171,7 +182,6 @@ const TestAnswerHandler = {
   },
   handle(handlerInput) {
     const attributes = getAttributes(handlerInput);
-    const state = attributes.state;
     const testQuestions = attributes.testQuestions;
     const testAnswers = attributes.testAnswers;
     const questionPrep = PREPOSITIONS[testQuestions[testQuestions.length - 1]];
@@ -183,12 +193,13 @@ const TestAnswerHandler = {
     const isCorrectArtikel = questionPrep.art.toLowerCase() === answerPrep.art[0];
     const isLastQuestion = testQuestions.length === QUESTION_COUNT;
     let speechText = '';
+    let cardText = '';
 
     // generate answer result
     if (isCorrectPreposition && isCorrectArtikel) {
       testAnswers.push(1);
       speechText += correctAnswerMessage;
-
+      cardText += testCorrectAnswerCardText + '\n\n';
     } else {
       testAnswers.push(0);
 
@@ -199,7 +210,9 @@ const TestAnswerHandler = {
         speechText += wrontAnswerMessage;
       }
 
-      speechText += ` <break time="250ms"/> ${prepositionToSsml(questionPrep)}`;
+      const correctAnswer = prepositionToSsml(questionPrep, true);
+      speechText += ` <break time="250ms"/> ${correctAnswer}`;
+      cardText += testWrongAnswerCardText.replace('{0}', correctAnswer) + '\n\n';
     }
 
     if (isLastQuestion) {
@@ -208,6 +221,7 @@ const TestAnswerHandler = {
       const correctPercents = Math.round((correctCount / QUESTION_COUNT) * 100);
       const resultText = testResultMessage.replace('{0}', correctPercents);
       speechText += `<break time="250ms"/> ${ resultText }`;
+      cardText += resultText;
 
       setAttributes(handlerInput, {
         state: '',
@@ -216,7 +230,7 @@ const TestAnswerHandler = {
       return handlerInput.responseBuilder
       .speak(`${speechText} <break time="150ms"/> ${testDoneMessage}`)
       .reprompt(learnOrTestMessage)
-      .withSimpleCard(generalCardTitle, resultText)
+      .withSimpleCard(generalCardTitle, cardText)
       .getResponse();
     } else {
       // generate next question
@@ -227,7 +241,9 @@ const TestAnswerHandler = {
         testAnswers: [...testAnswers],
       });
 
-      return generateTestResponse(handlerInput, index, speechText);
+      cardText += testNextQuestionCardText;
+
+      return generateTestResponse(handlerInput, index, speechText, cardText);
     }
   },
 };
@@ -280,7 +296,7 @@ const LearnRepeatHandler = {
   },
 };
 
-const HelpIntentHandler = {
+const HelpFallbackIntentHandler = {
   canHandle(handlerInput) {
     return ofIntent(handlerInput, ['AMAZON.HelpIntent', 'AMAZON.FallbackIntent']);
   },
@@ -304,13 +320,33 @@ const HelpIntentHandler = {
   },
 };
 
-const ExitHandler = {
+const StopIntentHandler = {
   canHandle(handlerInput) {
-    return ofIntent(handlerInput, ['AMAZON.StopIntent', 'AMAZON.CancelIntent']);
+    return ofIntent(handlerInput, 'AMAZON.StopIntent');
   },
   handle(handlerInput) {
     return handlerInput.responseBuilder
       .speak(exitSkillMessage)
+      .getResponse();
+  },
+};
+
+const CancelIntentHandler = {
+  canHandle(handlerInput) {
+    return ofIntent(handlerInput, 'AMAZON.CancelIntent');
+  },
+  handle(handlerInput) {
+    const speechText = learnOrTestMessage;
+
+    // reset the state
+    setAttributes(handlerInput, {
+      state: '',
+    });
+
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .reprompt(speechText)
+      .withSimpleCard(generalCardTitle, speechText)
       .getResponse();
   },
 };
@@ -353,8 +389,9 @@ exports.handler = skillBuilder
     TestQestionRepeatHandler,
     NextHandler,
     LearnRepeatHandler,
-    HelpIntentHandler,
-    ExitHandler,
+    HelpFallbackIntentHandler,
+    CancelIntentHandler,
+    StopIntentHandler,
     SessionEndedRequestHandler,
   )
   .addErrorHandlers(ErrorHandler)
