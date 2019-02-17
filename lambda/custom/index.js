@@ -230,6 +230,23 @@ const TestAnswerHandler = {
   },
 };
 
+const TestQestionRepeatHandler = {
+  canHandle(handlerInput) {
+    const state = getAttributes(handlerInput).state;
+    return (
+      ofIntent(handlerInput, 'AMAZON.RepeatIntent')
+      && state === states.TEST
+    );
+  },
+  handle(handlerInput) {
+    const attributes = getAttributes(handlerInput);
+    const testQuestions = attributes.testQuestions;
+    const index = testQuestions[testQuestions.length - 1];
+
+    return generateTestResponse(handlerInput, index);
+  },
+};
+
 const NextHandler = {
   canHandle(handlerInput) {
     const state = getAttributes(handlerInput).state;
@@ -247,7 +264,7 @@ const NextHandler = {
   },
 };
 
-const RepeatHandler = {
+const LearnRepeatHandler = {
   canHandle(handlerInput) {
     const state = getAttributes(handlerInput).state;
     return (
@@ -329,8 +346,9 @@ exports.handler = skillBuilder
     LearnIntentHandler,
     TestRequestHandler,
     TestAnswerHandler,
+    TestQestionRepeatHandler,
     NextHandler,
-    RepeatHandler,
+    LearnRepeatHandler,
     HelpIntentHandler,
     ExitHandler,
     SessionEndedRequestHandler,
